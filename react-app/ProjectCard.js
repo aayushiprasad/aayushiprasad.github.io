@@ -9,37 +9,36 @@ const {
   } = MaterialUI;
   
   function ProjectCard({ name, members, canJoin, onJoin, onLeave }) {
-    // State for hardware set quantities
     const [hwSet1, setHwSet1] = React.useState(50);
     const [hwSet2, setHwSet2] = React.useState(0);
   
-    // State for user input (quantity entered)
     const [qty, setQty] = React.useState("");
   
-    // Handlers for check in / out
-    const handleCheckIn = () => {
+    const handleCheckIn = async () => {
       const val = parseInt(qty) || 0;
       if (val > 0) {
-        setHwSet1(prev => Math.max(0, prev - val));
-        setHwSet2(prev => Math.max(0, prev - val));
+        const res = await fetch(`http://127.0.0.1:5000/checkin/${name}/${val}`);
+        const data = await res.json();
+        alert(data.message);
         setQty("");
       }
     };
-  
-    const handleCheckOut = () => {
+    
+    const handleCheckOut = async () => {
       const val = parseInt(qty) || 0;
       if (val > 0) {
-        setHwSet1(prev => Math.min(100, prev + val));
-        setHwSet2(prev => Math.min(100, prev + val));
+        const res = await fetch(`http://127.0.0.1:5000/checkout/${name}/${val}`);
+        const data = await res.json();
+        alert(data.message);
         setQty("");
       }
-    };
+    };    
   
     return (
       <Card
         variant="outlined"
         sx={{
-          backgroundColor: canJoin ? "#f9f9f9" : "#e8f5e9", // gray if joinable, green if joined
+          backgroundColor: canJoin ? "#f9f9f9" : "#e8f5e9",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",

@@ -3,9 +3,9 @@ const { Container, Typography, Box, Snackbar, Alert } = MaterialUI;
 
 function Projects() {
   const [projects, setProjects] = React.useState([
-    { id: 1, name: "Smart Glasses", members: 2, canJoin: true },
-    { id: 2, name: "Weather Viz", members: 4, canJoin: false },
-    { id: 3, name: "ERS Game", members: 1, canJoin: true },
+    { id: 1, name: "Arduino App", members: 2, canJoin: true },
+    { id: 2, name: "Weather Engine", members: 4, canJoin: false },
+    { id: 3, name: "Card Game", members: 1, canJoin: true },
   ]);
 
   const [banner, setBanner] = React.useState({
@@ -14,23 +14,29 @@ function Projects() {
     severity: "success",
   });
 
-  function handleJoin(id) {
+  async function handleJoin(id) {
+    const res = await fetch(`http://127.0.0.1:5000/join/${id}`);
+    const data = await res.json();
+  
     setProjects(prev =>
       prev.map(p =>
         p.id === id ? { ...p, canJoin: false, members: p.members + 1 } : p
       )
     );
-    setBanner({ open: true, message: "Joined project!", severity: "success" });
+    setBanner({ open: true, message: data.message, severity: "success" });
   }
-
-  function handleLeave(id) {
+  
+  async function handleLeave(id) {
+    const res = await fetch(`http://127.0.0.1:5000/leave/${id}`);
+    const data = await res.json();
+  
     setProjects(prev =>
       prev.map(p =>
         p.id === id ? { ...p, canJoin: true, members: p.members - 1 } : p
       )
     );
-    setBanner({ open: true, message: "Left project", severity: "info" });
-  }
+    setBanner({ open: true, message: data.message, severity: "info" });
+  }  
 
   return (
     <Container>
